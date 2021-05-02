@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../entities/entities.dart';
 
 abstract class Authentication {
@@ -12,4 +14,6 @@ class AuthenticationParams {
     required this.email,
     required this.password,
   });
+
+  Map toJson() => {'email': email, 'password': password};
 }

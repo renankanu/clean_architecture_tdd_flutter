@@ -4,9 +4,9 @@
 
 import 'dart:async' as _i3;
 
+import 'package:clean_architecture_tdd_flutter/data/http/http_client.dart'
+    as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-
-import 'remote_authentication_test.dart' as _i2;
 
 // ignore_for_file: comment_references
 // ignore_for_file: unnecessary_parenthesis
