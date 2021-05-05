@@ -65,13 +65,11 @@ void main() {
           },
           body: jsonEncode({'any_key': 'any_value'})));
     });
-
     test('Should call post without body', () async {
       await sut.request(url: url, method: 'post');
 
       verify(client.post(any, headers: anyNamed('headers')));
     });
-
     test('Should return data if post returns 200', () async {
       final response = await sut.request(
         url: url,
@@ -83,6 +81,16 @@ void main() {
     });
     test('Should return null if post returns 200 with no data', () async {
       mockResponseAny(200, body: '');
+      final response = await sut.request(
+        url: url,
+        method: 'post',
+        body: {'any_key': 'any_value'},
+      );
+
+      expect(response, null);
+    });
+    test('Should return null if post returns 204', () async {
+      mockResponseAny(204, body: '');
       final response = await sut.request(
         url: url,
         method: 'post',
