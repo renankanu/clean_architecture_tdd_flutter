@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import '../entities/entities.dart';
 
 abstract class Authentication {
