@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:clean_architecture_tdd_flutter/data/http/http.dart';
 import 'package:clean_architecture_tdd_flutter/infra/http/http.dart';
 import 'package:faker/faker.dart';
 import 'package:http/http.dart';
@@ -26,7 +27,8 @@ void main() {
         client.post(any, headers: anyNamed('headers'), body: anyNamed('body')));
 
     void mockResponseAny(int statusCode, {String body = ''}) {
-      mockRequestAny().thenAnswer((_) => Future(() => Response(body, 200)));
+      mockRequestAny()
+          .thenAnswer((_) => Future(() => Response(body, statusCode)));
     }
 
     setUp(() {
@@ -86,6 +88,12 @@ void main() {
       );
 
       expect(response, null);
+    });
+    test('Should return BadRequestError if post returns 400', () async {
+      mockResponseAny(400);
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.badRequest));
     });
   });
 }
