@@ -1,3 +1,4 @@
+import 'package:clean_architecture_tdd_flutter/domain/usecases/authentication.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -16,8 +17,9 @@ class RemoteAuthentication {
     required this.method,
   });
 
-  Future<void> auth() async {
-    await httpClient.request(url: url, method: method);
+  Future<void> auth(AuthenticationParams params) async {
+    final body = {'email': params.email, 'password': params.secret};
+    await httpClient.request(url: url, method: method, body: body);
   }
 }
 
@@ -25,6 +27,7 @@ abstract class HttpClient {
   Future<void> request({
     required String url,
     required String method,
+    Map body,
   });
 }
 
@@ -43,12 +46,19 @@ void main() {
       method: 'POST',
     );
   });
+
   test('Should call HttpClient with correct values', () async {
-    await sut.auth();
+    final params = AuthenticationParams(
+      email: faker.internet.email(),
+      secret: faker.internet.password(),
+    );
+
+    await sut.auth(params);
 
     verify(mockHttpClient.request(
       url: url,
       method: 'POST',
+      body: {'email': params.email, 'password': params.secret},
     ));
   });
 }
