@@ -1,3 +1,6 @@
+// ignore: prefer_relative_imports
+import 'package:clean_architecture_tdd_flutter/domain/helpers/helpers.dart';
+
 import '../../domain/usecases/usecases.dart';
 import '../http/http.dart';
 
@@ -14,11 +17,15 @@ class RemoteAuthentication {
 
   Future<void> auth(AuthenticationParams params) async {
     final body = RemoteAuthenticationParams.fromDomain(params).toJson();
-    await httpClient.request(
-      url: url,
-      method: method,
-      body: body,
-    );
+    try {
+      await httpClient.request(
+        url: url,
+        method: method,
+        body: body,
+      );
+    } on HttpError {
+      throw DomainError.unexpected;
+    }
   }
 }
 
