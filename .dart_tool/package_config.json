@@ -212,6 +212,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "http",
+      "rootUri": "file:///Users/renankanu/development/flutter/.pub-cache/hosted/pub.dartlang.org/http-0.13.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "http_multi_server",
       "rootUri": "file:///Users/renankanu/development/flutter/.pub-cache/hosted/pub.dartlang.org/http_multi_server-3.0.1",
       "packageUri": "lib/",
@@ -476,7 +482,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-09-14T03:23:33.975949Z",
+  "generated": "2021-09-16T23:50:19.474719Z",
   "generator": "pub",
   "generatorVersion": "2.14.0"
 }
