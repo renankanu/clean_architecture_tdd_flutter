@@ -29,6 +29,12 @@ void main() {
         final sut = HttpAdapter(client);
         final url = faker.internet.httpUrl();
 
+        when(client.post(Uri.parse(url))).thenAnswer(
+          (_) => Future(
+            () => Response('body', 200),
+          ),
+        );
+
         await sut.request(url: url, method: 'post');
 
         verify(client.post(Uri.parse(url)));
