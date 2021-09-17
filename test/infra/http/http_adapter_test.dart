@@ -15,29 +15,48 @@ class HttpAdapter {
     required String url,
     required String method,
   }) async {
-    await client.post(Uri.parse(url));
+    final headers = {
+      'content-type': 'application/json',
+      'accept': 'application/json',
+    };
+    await client.post(
+      Uri.parse(url),
+      headers: headers,
+    );
   }
 }
 
 @GenerateMocks([Client])
 void main() {
+  late Client client;
+  late HttpAdapter sut;
+  late String url;
+  setUp(() {
+    client = MockClient();
+    sut = HttpAdapter(client);
+    url = faker.internet.httpUrl();
+  });
   group('post', () {
     test(
       'Should call post with correct values',
       () async {
-        final client = MockClient();
-        final sut = HttpAdapter(client);
-        final url = faker.internet.httpUrl();
-
-        when(client.post(Uri.parse(url))).thenAnswer(
-          (_) => Future(
-            () => Response('body', 200),
-          ),
-        );
+        when(client.post(
+          Uri.parse(url),
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+          },
+        )).thenAnswer((_) => Future(() => Response('body', 200)));
 
         await sut.request(url: url, method: 'post');
 
-        verify(client.post(Uri.parse(url)));
+        verify(client.post(
+          Uri.parse(url),
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+          },
+        ));
       },
     );
   });
