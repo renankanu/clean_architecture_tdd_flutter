@@ -15,7 +15,7 @@ class HttpAdapter implements HttpClient {
   HttpAdapter(this.client);
 
   @override
-  Future<Map> request({
+  Future<Map?> request({
     required String url,
     required String method,
     Map? body,
@@ -31,7 +31,7 @@ class HttpAdapter implements HttpClient {
       headers: headers,
       body: jsonBody,
     );
-    return jsonDecode(response.body);
+    return response.body.isEmpty ? null : jsonDecode(response.body);
   }
 }
 
@@ -48,40 +48,35 @@ void main() {
   });
 
   group('post', () {
-    test(
-      'Should call post with correct values',
-      () async {
-        when(client.post(
-          Uri.parse(url),
-          headers: {
-            'content-type': 'application/json',
-            'accept': 'application/json',
-          },
-          body: jsonEncode({'any_key': 'any_value'}),
-        )).thenAnswer((_) => Future(() => Response('body', 200)));
+    PostExpectation mockRequestAny() => when(client.post(Uri.parse(url),
+        headers: anyNamed('headers'), body: anyNamed('body')));
 
-        await sut
-            .request(url: url, method: 'post', body: {'any_key': 'any_value'});
+    void mockResponseAny(int statusCode, {String body = ''}) {
+      mockRequestAny().thenAnswer((_) => Future(() => Response(body, 200)));
+    }
 
-        verify(client.post(
-          Uri.parse(url),
-          headers: {
-            'content-type': 'application/json',
-            'accept': 'application/json',
-          },
-          body: jsonEncode({'any_key': 'any_value'}),
-        ));
-      },
-    );
-    test('Should call post without body', () async {
-      when(client.post(
-        Uri.parse(url),
-        headers: anyNamed('headers'),
-      )).thenAnswer(
-        (_) =>
-            Future(() => Response(jsonEncode({'any_key': 'any_value'}), 200)),
+    setUp(() {
+      mockResponseAny(200, body: jsonEncode({'any_key': 'any_value'}));
+    });
+
+    test('Should call post with correct values', () async {
+      await sut.request(
+        url: url,
+        method: 'post',
+        body: {'any_key': 'any_value'},
       );
 
+      verify(client.post(
+        Uri.parse(url),
+        headers: {
+          'content-type': 'application/json',
+          'accept': 'application/json',
+        },
+        body: jsonEncode({'any_key': 'any_value'}),
+      ));
+    });
+
+    test('Should call post without body', () async {
       await sut.request(
         url: url,
         method: 'post',
@@ -96,16 +91,17 @@ void main() {
     });
 
     test('Should return data if post returns 200', () async {
-      when(client.post(
-        Uri.parse(url),
-        headers: anyNamed('headers'),
-      )).thenAnswer(
-        (_) async => Response(jsonEncode({'any_key': 'any_value'}), 200),
-      );
-
       final response = await sut.request(url: url, method: 'post');
 
       expect(response, {'any_key': 'any_value'});
+    });
+
+    test('Should return null if post returns 200 with no data', () async {
+      mockResponseAny(200, body: '');
+
+      final response = await sut.request(url: url, method: 'post');
+
+      expect(response, null);
     });
   });
 }
