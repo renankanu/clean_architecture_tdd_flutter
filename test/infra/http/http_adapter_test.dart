@@ -39,6 +39,8 @@ void main() {
           .thenAnswer((_) => Future(() => Response(body, statusCode)));
     }
 
+    void mockError() => mockRequestAny().thenThrow(Exception());
+
     setUp(() {
       mockResponseAny(200, body: jsonEncode({'any_key': 'any_value'}));
     });
@@ -142,6 +144,14 @@ void main() {
 
     test('Should return ServerError if post returns 500', () async {
       mockResponseAny(500);
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+
+    test('Should return ServerError if post throws', () async {
+      mockError();
+
       final future = sut.request(url: url, method: 'post');
 
       expect(future, throwsA(HttpError.serverError));
