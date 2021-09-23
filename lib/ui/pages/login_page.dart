@@ -32,9 +32,9 @@ class LoginPage extends StatelessWidget {
                       ),
                       obscureText: true,
                     ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('Login'),
+                    const ElevatedButton(
+                      onPressed: null,
+                      child: Text('Login'),
                     ),
                     TextButton.icon(
                       onPressed: () {},
